@@ -1,0 +1,47 @@
+name: Cold Install Gate
+
+on:
+  push:
+    tags:
+      - 'v*'
+  schedule:
+    - cron: '0 0 * * *'  # nightly
+
+jobs:
+  cold-install:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies from real PyPI
+        run: |
+          # Both grafomem and langgraph-checkpoint-grafomem are on real PyPI now!
+          pip install grafomem langgraph-checkpoint-grafomem langgraph langgraph-checkpoint-sqlite pytest
+
+      - name: Install the example package
+        run: |
+          pip install .
+
+      - name: Run headless interactive loop
+        run: |
+          OUTPUT=$(python -m grafomem_example --user ci --script demo/smoke.txt)
+          echo "$OUTPUT"
+          # The exact stdout sentinel the release gate relies on
+          if echo "$OUTPUT" | grep -q "RECEIPT VERIFIED"; then
+            echo "Receipt verified successfully in CLI!"
+          else
+            echo "Failed to verify receipt in CLI output!"
+            exit 1
+          fi
+
+      - name: Run README quickstart and programmatic tests
+        run: |
+          pytest tests/

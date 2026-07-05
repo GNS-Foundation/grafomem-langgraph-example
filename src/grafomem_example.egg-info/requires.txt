@@ -1,0 +1,7 @@
+langgraph
+langgraph-checkpoint-sqlite
+grafomem
+langgraph-checkpoint-grafomem>=1.0.1
+
+[test]
+pytest

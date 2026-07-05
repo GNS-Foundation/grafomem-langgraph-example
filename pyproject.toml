@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "grafomem_example"
+version = "0.1.0"
+description = "GRAFOMEM Reference LangGraph Agent"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "langgraph",
+    "langgraph-checkpoint-sqlite",
+    "grafomem",
+    "langgraph-checkpoint-grafomem>=1.0.1",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+]

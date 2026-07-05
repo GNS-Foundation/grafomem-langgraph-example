@@ -1,0 +1,6 @@
+Hello! My name is Alice.
+I live in Madrid.
+/recall
+/forget
+/recall
+/quit
